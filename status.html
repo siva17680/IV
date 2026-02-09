@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <header>
+        <div class="container nav-flex">
+            <div class="logo">Student Payments</div>
+            <nav>
+                <a href="admin-panel.html" class="btn-nav">Dashboard</a>
+                <button onclick="logout()" class="btn-nav btn-logout">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container animate-fade">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3>Payment Records</h3>
+                <select id="filter" style="width:200px; padding:8px;">
+                    <option value="All">Show All</option>
+                    <option value="Paid">Paid Only</option>
+                    <option value="Pending">Pending / Unpaid</option>
+                </select>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentList">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { requireAuth, loadStudentsTable } from './assets/js/app.js';
+        
+        requireAuth(); // Security Check
+
+        const filter = document.getElementById('filter');
+        loadStudentsTable('studentList', 'All');
+
+        filter.addEventListener('change', (e) => {
+            loadStudentsTable('studentList', e.target.value);
+        });
+    </script>
+</body>
+</html>

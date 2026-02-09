@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Finance App</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body style="display:flex; justify-content:center; align-items:center; min-height:100vh;">
+
+    <div class="card animate-fade" style="width: 100%; max-width: 400px; text-align: center;">
+        <h2 style="color: var(--primary-blue); margin-bottom: 20px;">
+            <i class="bi bi-shield-lock"></i> Admin Access
+        </h2>
+        
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Email Address" required>
+        </div>
+        
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password" required>
+        </div>
+        
+        <button id="btnLogin" class="btn-action">Login Securely</button>
+        
+        <p id="errorMsg" style="color: var(--primary-red); margin-top: 15px; font-size: 0.9rem; display: none;"></p>
+        
+        <br>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        
+        <a href="index.html" style="color: #666; text-decoration: none; font-size: 0.9rem;">
+            <i class="bi bi-arrow-left"></i> Back to Public Site
+        </a>
+    </div>
+
+    <script type="module">
+        // 1. Import 'auth' directly from the configuration file
+        import { auth } from './assets/js/firebase-config.js';
+        
+        // 2. Import the login function from your main app logic
+        import { loginAdmin } from './assets/js/app.js';
+
+        // 3. Auto-Redirect: If admin is already logged in, go to dashboard
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                console.log("User already logged in:", user.email);
+                window.location.href = 'admin-panel.html';
+            }
+        });
+
+        // 4. Handle Login Button Click
+        document.getElementById('btnLogin').addEventListener('click', () => {
+            const emailField = document.getElementById('email');
+            const passField = document.getElementById('password');
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Reset error message
+            errorMsg.style.display = 'none';
+            errorMsg.innerText = '';
+
+            // Simple validation
+            if (!emailField.value || !passField.value) {
+                errorMsg.innerText = "Please enter both email and password.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Attempt Login
+            loginAdmin(emailField.value, passField.value)
+                .then((userCredential) => {
+                    // Success is handled by onAuthStateChanged above
+                    console.log("Login Successful");
+                })
+                .catch((error) => {
+                    // Handle Errors (Wrong password, user not found, etc.)
+                    console.error("Login Error:", error);
+                    errorMsg.innerText = "Login Failed: " + error.message;
+                    errorMsg.style.display = 'block';
+                });
+        });
+    </script>
+</body>
+</html>

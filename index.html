@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Transparency Portal</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+
+    <header>
+        <div class="container nav-flex">
+            <div class="logo"><i class="bi bi-graph-up-arrow"></i> Transparency Portal</div>
+            <a href="login.html" class="btn-nav">Admin Login</a>
+        </div>
+    </header>
+
+    <div class="container animate-fade">
+        <div class="dashboard-grid">
+            <div class="card green-accent">
+                <h3><i class="bi bi-wallet2"></i> Available Funds</h3>
+                <div id="pubBalance" class="stat-value green">Loading...</div>
+                <small style="color:#666">Current balance in hand</small>
+            </div>
+            <div class="card expense">
+                <h3><i class="bi bi-cash-stack"></i> Total Spent</h3>
+                <div id="pubExpense" class="stat-value red">Loading...</div>
+                <small style="color:#666">Total expenses to date</small>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="bi bi-clock-history"></i> Expense History</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Amount Used</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseTable">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { loadDashboardData } from './assets/js/app.js';
+        
+        loadDashboardData({
+            onTotals: (inc, exp, bal) => {
+                document.getElementById('pubBalance').innerText = 'LKR ' + bal.toLocaleString();
+                document.getElementById('pubExpense').innerText = 'LKR ' + exp.toLocaleString();
+            },
+            onExpenseList: (list) => {
+                const tbody = document.getElementById('expenseTable');
+                tbody.innerHTML = '';
+                list.sort((a,b) => b.timestamp - a.timestamp); // Newest first
+                list.forEach(item => {
+                    const row = `<tr>
+                        <td>${item.usageName}</td>
+                        <td>${new Date(item.timestamp).toLocaleDateString()}</td>
+                        <td style="color:var(--primary-red); font-weight:bold;">- LKR ${parseFloat(item.amount).toLocaleString()}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
