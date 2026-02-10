@@ -117,5 +117,18 @@ export const loadStudentsTable = (tableId, filter = 'All') => {
 };
 
 // --- GLOBAL HELPERS (Window Scope) ---
-window.delStudent = (id) => { if(confirm('Delete this record?')) db.ref('students/'+id).remove(); };
-window.markPaid = (id) => { db.ref('students/'+id).update({status: 'Paid'}); };
+
+// UPDATED: Delete with Confirmation
+window.delStudent = (id) => {
+    if (confirm("⚠️ Are you sure you want to PERMANENTLY delete this record?")) {
+        db.ref('students/' + id).remove()
+            .catch((error) => alert("Error: " + error.message));
+    }
+};
+
+// UPDATED: Mark Paid with Confirmation
+window.markPaid = (id) => {
+    if (confirm("Mark this student as PAID?")) {
+        db.ref('students/' + id).update({ status: 'Paid' });
+    }
+};
