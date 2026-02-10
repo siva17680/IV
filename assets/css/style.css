@@ -107,17 +107,20 @@ tr:hover { background-color: #f9f9f9; }
 .animate-fade { animation: fadeIn 0.6s ease-out; }
 
 /* =========================================
-   📱 MOBILE RESPONSIVE (SMART CARDS)
+   📱 MOBILE RESPONSIVE (FLEXBOX FIX)
    ========================================= */
 @media (max-width: 768px) {
     
-    /* 1. Stack Header */
+    /* 1. Stack Header & Fix Layout */
     .nav-flex { flex-direction: column; text-align: center; gap: 15px; }
     .btn-nav { width: 100%; margin: 5px 0 0 0; display: block; }
     .dashboard-grid { grid-template-columns: 1fr; }
+    
+    /* Ensure Container doesn't overflow */
+    .container { padding: 10px; width: 100%; overflow-x: hidden; }
 
     /* 2. TABLE TO CARD TRANSFORMATION */
-    table, thead, tbody, th, td, tr { display: block; }
+    table, thead, tbody, th, td, tr { display: block; width: 100%; }
     
     /* Hide the top header row */
     thead tr { position: absolute; top: -9999px; left: -9999px; }
@@ -127,51 +130,70 @@ tr:hover { background-color: #f9f9f9; }
         border: 1px solid #ddd; 
         border-radius: 8px; 
         background: #fff;
-        padding: 10px;
+        padding: 0; 
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        overflow: hidden; 
     }
     
     td { 
         border: none;
         border-bottom: 1px solid #eee; 
         position: relative;
-        padding-left: 50%; /* Make space for label */
-        text-align: right; /* Value on the right */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        min-height: 40px;
+        padding: 12px 15px;
+        
+        /* THE FIX: Flexbox Layout */
+        display: flex; 
+        justify-content: space-between; /* Push Label Left, Data Right */
+        align-items: center; 
+        text-align: right; 
+        
+        /* Prevent Overlap */
+        word-break: break-word; 
+        overflow-wrap: break-word;
     }
     
     td:last-child { border-bottom: none; }
 
-    /* 3. INJECT LABELS (The Fix!) */
+    /* 3. INJECT LABELS (Static Position) */
     td::before { 
-        position: absolute;
-        left: 10px;
-        width: 45%; 
-        white-space: nowrap;
+        position: static; /* NO MORE ABSOLUTE POSITIONING */
+        
+        /* Styling */
         font-weight: bold;
         color: var(--primary-blue);
         text-align: left;
+        margin-right: 20px; /* Force space between Label and Data */
+        white-space: nowrap; /* Don't wrap the label */
+        flex-shrink: 0; /* Never shrink the label */
     }
 
     /* --- Labels for Admin Student Table (status.html) --- */
-    /* Checks if we are on the page with studentList ID */
-    #studentList tr td:nth-of-type(1)::before { content: "ID:"; }
-    #studentList tr td:nth-of-type(2)::before { content: "Name:"; }
-    #studentList tr td:nth-of-type(3)::before { content: "Price:"; }
-    #studentList tr td:nth-of-type(4)::before { content: "Status:"; }
-    #studentList tr td:nth-of-type(5)::before { content: "Action:"; }
+    #studentList tr td:nth-of-type(1)::before { content: "ID"; }
+    #studentList tr td:nth-of-type(2)::before { content: "Name"; }
+    #studentList tr td:nth-of-type(3)::before { content: "Price"; }
+    #studentList tr td:nth-of-type(4)::before { content: "Status"; }
+    #studentList tr td:nth-of-type(5)::before { content: "Action"; }
 
     /* --- Labels for Public Expense Table (index.html) --- */
-    #expenseTable tr td:nth-of-type(1)::before { content: "Usage:"; }
-    #expenseTable tr td:nth-of-type(2)::before { content: "Date:"; }
-    #expenseTable tr td:nth-of-type(3)::before { content: "Amount:"; }
+    #expenseTable tr td:nth-of-type(1)::before { content: "Usage"; }
+    #expenseTable tr td:nth-of-type(2)::before { content: "Date"; }
+    #expenseTable tr td:nth-of-type(3)::before { content: "Amount"; }
 
-    /* 4. Filter Dropdown Fix */
-    #filter { width: 100% !important; margin-top: 10px; }
+    /* 4. Fix Action Buttons in Mobile */
+    /* Make buttons stack vertically if there are two */
+    td:last-child {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 5px;
+    }
     
-    /* 5. Mobile Buttons */
-    .btn-delete, .btn-success { width: 48%; justify-content: center; }
+    /* Make buttons full width inside the card row for easier tapping */
+    .btn-delete, .btn-success { 
+        width: 100%; 
+        justify-content: center; 
+        margin: 0;
+    }
+
+    /* 5. Filter Dropdown */
+    #filter { width: 100% !important; margin-top: 10px; }
 }
